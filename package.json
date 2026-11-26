@@ -1,0 +1,25 @@
+{
+  "name": "jirai-kaidan",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "sim": "tsx scripts/sim.ts",
+    "e2e": "node scripts/e2e.mjs",
+    "sim:check": "tsx scripts/sim.ts 1000 --check"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.7",
+    "puppeteer-core": "^25.18.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  },
+  "license": "MIT",
+  "author": "tademushi2004"
+}
