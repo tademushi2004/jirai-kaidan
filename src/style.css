@@ -73,8 +73,8 @@ h2 { font-size: 1.15rem; margin: 1.2rem 0 .5rem; }
 /* マス: 平らな紙の上に、段の高さぶんの色の帯（段）を描く。帯の上端の線が「段の縁」 */
 .cell {
   position: relative; aspect-ratio: 1 / .74; min-height: 0; padding: 0; border: none; border-radius: 3px; box-shadow: none;
-  --blk: #e2d4ba; --edge: #8f7c62;
-  background: linear-gradient(to top, var(--blk) 0 calc(var(--step) - 3px), var(--edge) calc(var(--step) - 3px) var(--step), var(--paper-2) var(--step));
+  --blk: #e2d4ba; --edge: #8f7c62; --s: var(--step);
+  background: linear-gradient(to top, var(--blk) 0 calc(var(--s) - 3px), var(--edge) calc(var(--s) - 3px) var(--s), var(--paper-2) var(--s));
   color: var(--ink); font: inherit; text-align: left; overflow: visible;
 }
 .cell.m3 { --blk: #f0c4ba; --edge: var(--shu); }
@@ -82,7 +82,7 @@ h2 { font-size: 1.15rem; margin: 1.2rem 0 .5rem; }
 .cell.tap:active { transform: none; box-shadow: inset 0 0 0 2px var(--ink); }
 .cell .num { position: absolute; left: 4px; top: 2px; font-family: var(--serif); font-size: clamp(.72rem, 2.6vw, .95rem); font-variant-numeric: tabular-nums; line-height: 1; }
 .cell.m3 .num { color: var(--shu); font-weight: 700; }
-.cell.goal { --blk: #8e211a; --edge: #5c1410; background: linear-gradient(to top, var(--blk) 0 calc(var(--step) - 3px), var(--edge) calc(var(--step) - 3px) var(--step), var(--shu) var(--step)); }
+.cell.goal { --blk: #8e211a; --edge: #5c1410; background: linear-gradient(to top, var(--blk) 0 calc(var(--s) - 3px), var(--edge) calc(var(--s) - 3px) var(--s), var(--shu) var(--s)); }
 .cell.start { aspect-ratio: auto; height: 100%; }
 .cell.goal .num { color: var(--paper-2); font-weight: 700; left: 6px; top: 5px; font-size: clamp(.78rem, 3vw, 1rem); }
 /* ゴールのマスでは、コマを文字に重ねず右端に置く */
@@ -92,7 +92,7 @@ h2 { font-size: 1.15rem; margin: 1.2rem 0 .5rem; }
 .cell.turn::before { content: ''; position: absolute; left: 58%; top: -10px; width: 22px; height: 13px; transform: translateX(-50%); background: var(--ink); clip-path: polygon(50% 0, 100% 100%, 0 100%); z-index: 3; }
 .cell.picked { outline: 3px solid var(--me); outline-offset: -3px; }
 .marks { position: absolute; right: 3px; top: 3px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-end; max-width: 70%; }
-.pieces { position: absolute; left: 0; right: 0; bottom: calc(var(--step) - 1px); display: flex; justify-content: center; gap: 4px; }
+.pieces { position: absolute; left: 0; right: 0; bottom: calc(var(--s) - 1px); display: flex; justify-content: center; gap: 4px; }
 
 /* 印（漢字1字のはんこ）: 色だけに頼らず字と形で区別する */
 .bd { font-style: normal; font-family: var(--serif); font-weight: 700; font-size: clamp(.6rem, 2.2vw, .78rem); line-height: 1; padding: 2px 3px; border-radius: 3px; border: 1.5px solid currentColor; background: var(--paper-2); }
@@ -296,6 +296,56 @@ select { font: inherit; background: var(--paper-2); color: var(--ink); border: 1
 .opt.col { flex-direction: column; align-items: stretch; gap: .2rem; }
 .opt input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--ink); }
 .opt input[type=range] { width: 100%; accent-color: var(--ink); }
+
+/* ---- 縦長のスマホ: 盤を画面幅いっぱいに広げ、マス・数字・印・コマを大きくする（高さによる縮小はしない） */
+@media (max-width: 899px) {
+  .play { padding: .25rem .3rem .6rem; }
+  .hud, .legend { width: 100%; }
+  .track { width: calc(100% - 118px); }
+  .board { width: min(100%, 560px); min-width: 0; gap: 3px; padding: 3px; }
+  .cell .num { left: 5px; top: 3px; font-size: clamp(1rem, 4.6vw, 1.25rem); }
+  .cell.goal .num { font-size: clamp(.85rem, 3.8vw, 1.05rem); left: 6px; top: 5px; }
+  .cell.start .num::after { font-size: .62em; }
+  .marks { right: 3px; top: 3px; gap: 2px; }
+  .bd { font-size: clamp(.78rem, 3.4vw, .95rem); padding: 2px 4px; }
+  .memo { font-size: clamp(1.1rem, 4.8vw, 1.35rem); }
+  .piece { width: clamp(16px, 4.8vw, 20px); height: clamp(16px, 4.8vw, 20px); }
+  .cell .pieces { padding-left: 10px; }
+  .cell.turn::before { width: 26px; height: 15px; top: -11px; }
+  /* 盤を大きくしたぶん、下の部分を詰めて、手札が画面内に入るようにする */
+  /* 低いマスでもコマが数字に重ならないよう、段の高さを抑える */
+  .cell { aspect-ratio: 1 / .72; --s: calc(var(--step) * .6); }
+  .topbar { padding: 0 .4rem; }
+  .topbar button { min-height: 36px; padding-top: .2rem; padding-bottom: .2rem; }
+  .hud .side { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .4rem; }
+  .hud .side.ai { justify-content: flex-end; }
+  .hud .who { flex-basis: 100%; }
+  .hud .side.ai .who { justify-content: flex-start; }
+  .hud .pos b { font-size: 1.3rem; }
+  .hud .gap { padding: .1rem .6rem; font-size: .85rem; }
+  .track { margin: 0 auto 4px; }
+  .play { gap: .25rem; }
+  .right { gap: .15rem; }
+  .duel { padding: .2rem .5rem; }
+  .duel-row { gap: .3rem; }
+  .mini-who { display: none; }
+  .mini { width: 34px; height: 42px; border-radius: 6px; }
+  .mini .ic { font-size: 1.1rem; }
+  .mini .q { font-size: 1.15rem; }
+  .mini .nm { font-size: .64rem; }
+  .stamp b { width: 2.3rem; height: 2.3rem; font-size: 1.6rem; }
+  .stamp span { font-size: .8rem; margin-top: 1px; }
+  .tie { margin-top: .1rem; font-size: .72rem; }
+  .bubble { padding: .2rem .5rem; font-size: .76rem; }
+  .ticker { min-height: 1.2em; font-size: .8rem; line-height: 1.3; }
+  .hand-row { padding-top: 8px; gap: .45rem; }
+  .card { min-height: 0; padding: .15rem .2rem; }
+  .card .ic { font-size: 1.4rem; line-height: 1.05; }
+  .card .nm { font-size: .95rem; line-height: 1.15; }
+  .card .st { font-size: 1rem; line-height: 1.1; }
+  .cards-hint { margin: .15rem 0 0; font-size: .74rem; }
+  .sub-actions { margin: .1rem 0 0; }
+}
 
 /* ---- 横長の画面: 盤を左、手札を右に */
 @media (min-width: 900px) {
